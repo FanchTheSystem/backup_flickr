@@ -22,7 +22,7 @@ print Dumper($mech->uri());
 #print Dumper($mech->find_all_links( url_regex => qr/$img_link/i));
 my $id_list;
 
-while ($cpt <= 88) {
+while ($cpt <= 5) {
     
     foreach my $link ($mech->find_all_links( url_regex => qr/$img_link/i)) {
 	my $new_img = $link->url();
