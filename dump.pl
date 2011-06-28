@@ -5,50 +5,50 @@ use Data::Dumper;
 use WWW::Mechanize;
 
 
-my $cpt = 1;    
-my $site = "http://www.flickr.com/photos/manannan_alias_fanch/";    
-my $img_link = '/photos/manannan_alias_fanch/';
-my $img_tag = "img";
+my $site = "http://www.flickr.com/photos/moulichnaila/";#"http://www.flickr.com/photos/manannan_alias_fanch/tags";    
+my $img_link =  'photostream';  
+my $size = 'l'; # s m z l o 
+
+
 
 my $mech = WWW::Mechanize->new();
+# Mouah ah ah !
 $mech->agent_alias( 'Windows IE 6' );
-
 
 $mech->get($site);
 print Dumper($mech->uri());
 
+#print Dumper($mech->find_all_links( url_regex => qr/$img_link/));
 
-#print Dumper($mech->find_link( tag => $img_tag));
-#print Dumper($mech->find_all_links( url_regex => qr/$img_link/i));
-my $id_list;
+foreach my $link ($mech->find_all_links( url_regex => qr/$img_link/)) {
+    my $img_url = $link->url();
 
-while ($cpt <= 5) {
+    # Recupération de l'id de l'image
+    my @backtab = split ('/', $img_url);
+    my $img_id = $backtab[3]; 
+    $backtab[4] = 'sizes';
+    $backtab[5] = $size;
     
-    foreach my $link ($mech->find_all_links( url_regex => qr/$img_link/i)) {
-	my $new_img = $link->url();
-	my $img_id = substr($new_img, length($img_link), length($new_img) - length($img_link) - 1);
-	if ($id_list->{$img_id} != 1) {
-	    $id_list->{$img_id} = 1;
-	    
-	    if ($img_id =~ m/\D/g) {
-		print "$new_img => skipped\n";
-	    }
-	    else {
-		print "$new_img => $new_img/sizes/o/\n";
-		$mech->get("$new_img/sizes/o/");
-		if ($mech->status() == 200) {
-		    my $img_lnk = $mech->find_link( url_regex => qr/jpg/i );
-		    print Dumper($img_lnk->url());
-		    system ('cd photos; wget -q '.$img_lnk->url());     
-		}
-	    }
-	}
-    }
+    my $new_img_url = join('/',@backtab[0..5]).'/';
 
-    $cpt++;
-    $mech->get($site."/page$cpt/");
-    print Dumper($mech->uri());
+    print "Info : $img_url $img_id\n";
+    print " \t => $new_img_url\n";
+  
+    $mech->get("$new_img_url");
+ 
+    #    print Dumper($mech->find_all_images(url_regex => qr/jpg/i));
+    my $img_lnk = $mech->find_image(url_regex => qr/jpg/i );
+    print Dumper($img_lnk->url());
+   
+    # Mouah ! 
+    system ('wget -q '.$img_lnk->url());     
+
+
+    #    print Dumper($mech->uri());
+ 
 }
+
+#   $mech->get($site."/page$cpt/");
 
 
 
