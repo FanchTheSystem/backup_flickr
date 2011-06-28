@@ -4,9 +4,11 @@ use Data::Dumper;
 
 use WWW::Mechanize;
 
-
-my $site = "http://www.flickr.com/photos/prismoperfect/";#"http://www.flickr.com/photos/manannan_alias_fanch/";    
+# A remplacer par l'url du stream a telecharger
+my $site = "http://www.flickr.com/photos/manannan_alias_fanch/"; 
+# Ne pas toucher :)
 my $img_link =  'photostream';
+# Choisir la taille (Attention toute les tailles ne sont pas possible avec tout les stream
 my $size = 'z'; # s m z l o 
 
 my $mech = WWW::Mechanize->new();
